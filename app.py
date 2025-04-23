@@ -1,4 +1,7 @@
-from flask import Flask, request, jsonify, render_template_string
+from flask import Flask
+from flask import jsonify
+from flask import render_template_string
+from flask import request
 
 app = Flask(__name__)
 
@@ -50,17 +53,20 @@ HTML_TEMPLATE = """
 </html>
 """
 
-@app.route('/')
+
+@app.route("/")
 def index():
     return render_template_string(HTML_TEMPLATE)
 
-@app.route('/chat', methods=['POST'])
+
+@app.route("/chat", methods=["POST"])
 def chat():
     data = request.json
-    user_input = data.get('message', '').lower()
+    user_input = data.get("message", "").lower()
 
     reply = user_input
-    return jsonify({ 'reply': reply })
+    return jsonify({"reply": reply})
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)
