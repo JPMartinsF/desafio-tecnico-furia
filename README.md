@@ -16,8 +16,8 @@ Este repositório contém a entrega do **Challenge #1 - Experiência Conversacio
 
 1. **Clone o repositório:**
 ```bash
-git clone https://github.com/seu-usuario/furia-chatbot.git
-cd furia-chatbot
+git clone https://github.com/JPMartinsF/desafio-tecnico-furia.git
+cd desafio-tecnico-furia
 ```
 
 2. **Crie o ambiente virtual e instale as dependências:**
@@ -48,7 +48,7 @@ Veja como o fã pode interagir com o bot:
 
 ## 🗂️ Estrutura do Projeto
 ```
-furia-chatbot/
+desafio-tecnico-furia/
 ├── app.py              # Código principal do chatbot Flask
 ├── README.md           # Documentação do projeto
 └── static/             # (Opcional) arquivos estáticos, se necessário no futuro
