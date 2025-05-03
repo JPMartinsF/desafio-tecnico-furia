@@ -27,11 +27,6 @@ source venv/bin/activate  # No Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-> Caso não haja arquivo `requirements.txt`, instale manualmente:
-```bash
-pip install flask requests
-```
-
 3. **Execute a aplicação:**
 ```bash
 python app.py
