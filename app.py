@@ -5,6 +5,17 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+# Estado para alternar curiosidades
+curiosity_index = 0
+
+CURIOSIDADES = [
+    "💡 Sabia que a FURIA foi o primeiro time BR a jogar de forma agressiva e estratégica no CS internacional?",
+    "🔥 A FURIA foi fundada em 2017 e rapidamente se tornou uma das principais organizações de eSports do Brasil.",
+    "🎯 O estilo tático da FURIA chamou atenção mundial por sua ousadia, especialmente em mapas como Mirage e Vertigo.",
+    "🎮 A FURIA não atua apenas em CS:GO! Ela também possui times em League of Legends, Valorant, PUBG, Apex Legends e Rocket League.",
+    "🏆 A FURIA já conquistou diversos campeonatos, incluindo o ESL Pro League Season 12 e o DreamHack Masters Spring 2021."
+]
+
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang=\"pt-BR\">
@@ -66,8 +77,29 @@ def get_next_furia_match():
                     date_str = dt.strftime("%d/%m/%Y %H:%M")
                     opponent = [team for team in teams if "FURIA" not in team]
                     opponent_str = opponent[0] if opponent else "Adversário indefinido"
-                    return f"📅 Próximo jogo: {event} — contra {opponent_str} em {date_str}"
+                    return f"\U0001F4C5 Próximo jogo: {event} — contra {opponent_str} em {date_str}"
             return "❌ Não encontrei partidas futuras da FURIA no momento."
+        else:
+            return "⚠️ Erro ao buscar informações, tente novamente mais tarde."
+    except Exception as e:
+        return f"⚠️ Erro inesperado: {str(e)}"
+
+def get_furia_players():
+    try:
+        response = requests.get("https://hltv-api.vercel.app/api/match.json")
+        if response.status_code == 200:
+            players = response.json()
+            jogadores = []
+            for player in players:
+                if "FURIA" in player["team"] or "FURIA Academy" in player["team"]:
+                    nickname = player.get("nickname", "FURIA")
+                    kd = player.get("kd", "N/A")
+                    rating = player.get("rating", "N/A")
+                    jogadores.append(f"Nickname: {nickname}\nKD: {kd}\nRating: {rating}")
+            if jogadores:
+                return "👥 Jogadores em destaque da FURIA:\n\n" + "\n\n".join(jogadores)
+            else:
+                return "Nenhum jogador encontrado."
         else:
             return "⚠️ Erro ao buscar informações, tente novamente mais tarde."
     except Exception as e:
@@ -79,17 +111,17 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
+    global curiosity_index
     data = request.json
     user_input = data.get('message', '').lower()
 
-    if any(palavra in user_input for palavra in ['jogo', 'agenda', 'partida']):
+    if any(p in user_input for p in ['jogo', 'agenda', 'partida']):
         reply = get_next_furia_match()
-    elif 'destaque' in user_input or 'jogador' in user_input:
-        reply = '🐍 KSCERATO tem sido o destaque nas últimas partidas!'
+    elif any(p in user_input for p in ['destaque', 'jogador', 'jogadores']):
+        reply = get_furia_players()
     elif 'curiosidade' in user_input:
-        reply = '💡 Sabia que a FURIA foi o primeiro time BR a jogar de forma agressiva e estratégica no CS internacional?'
-    elif 'quiz' in user_input:
-        reply = '🎮 Em breve teremos um quiz interativo para testar seu nível de fã!'
+        reply = CURIOSIDADES[curiosity_index]
+        curiosity_index = (curiosity_index + 1) % len(CURIOSIDADES)
     else:
         reply = '⚡️ Ainda estou aprendendo! Tente perguntar sobre jogos, jogadores ou curiosidades.'
 
