@@ -12,8 +12,7 @@ CURIOSIDADES = [
     "💡 Sabia que a FURIA foi o primeiro time BR a jogar de forma agressiva e estratégica no CS internacional?",
     "🔥 A FURIA foi fundada em 2017 e rapidamente se tornou uma das principais organizações de eSports do Brasil.",
     "🎯 O estilo tático da FURIA chamou atenção mundial por sua ousadia, especialmente em mapas como Mirage e Vertigo.",
-    "🎮 A FURIA não atua apenas em CS:GO! Ela também possui times em League of Legends, Valorant, PUBG, Apex Legends e Rocket League.",
-    "🏆 A FURIA já conquistou diversos campeonatos, incluindo o ESL Pro League Season 12 e o DreamHack Masters Spring 2021."
+    "🎮 A FURIA também tem times em outros jogos como Valorant, League of Legends, Rocket League, Apex Legends, e PUBG Mobile."
 ]
 
 HTML_TEMPLATE = """
@@ -56,7 +55,7 @@ HTML_TEMPLATE = """
     function appendMessage(sender, text) {
       const div = document.createElement('div');
       div.className = `msg ${sender}`;
-      div.textContent = text;
+      div.innerHTML = text;
       document.getElementById('chatbox').appendChild(div);
     }
   </script>
@@ -122,6 +121,8 @@ def chat():
     elif 'curiosidade' in user_input:
         reply = CURIOSIDADES[curiosity_index]
         curiosity_index = (curiosity_index + 1) % len(CURIOSIDADES)
+    elif 'contato' in user_input:
+        reply = '📞 Para falar com a FURIA, acesse: <a href="https://wa.me/5511993404466" target="_blank">WhatsApp Oficial</a> — estamos em beta fechado!'
     else:
         reply = '⚡️ Ainda estou aprendendo! Tente perguntar sobre jogos, jogadores ou curiosidades.'
 
