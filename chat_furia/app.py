@@ -1,6 +1,10 @@
 from datetime import datetime
+
 import requests
-from flask import Flask, jsonify, request, render_template
+from flask import Flask
+from flask import jsonify
+from flask import render_template
+from flask import request
 
 app = Flask(__name__)
 curiosity_index = 0
@@ -12,9 +16,11 @@ CURIOSIDADES = [
     "🎮 A FURIA também tem times em outros jogos como Valorant, League of Legends, Rocket League, Apex Legends, e PUBG Mobile.",
 ]
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
+
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -30,13 +36,12 @@ def chat():
         reply = CURIOSIDADES[curiosity_index]
         curiosity_index = (curiosity_index + 1) % len(CURIOSIDADES)
     elif "contato" in user_input:
-        reply = (
-            '📞 Para falar com a FURIA, acesse: <a href="https://wa.me/5511993404466" target="_blank">WhatsApp Oficial</a>'
-        )
+        reply = '📞 Para falar com a FURIA, acesse: <a href="https://wa.me/5511993404466" target="_blank">WhatsApp Oficial</a>'
     else:
         reply = "⚡️ Olá! Tente perguntar sobre jogos, jogadores, curiosidades ou contato para falar conosco!"
 
     return jsonify({"reply": reply})
+
 
 def get_next_furia_match():
     try:
@@ -57,6 +62,7 @@ def get_next_furia_match():
     except Exception as e:
         return f"⚠️ Erro inesperado: {str(e)}"
 
+
 def get_furia_players():
     try:
         response = requests.get("https://hltv-api.vercel.app/api/match.json")
@@ -75,6 +81,7 @@ def get_furia_players():
         return "⚠️ Erro ao buscar informações, tente novamente mais tarde."
     except Exception as e:
         return f"⚠️ Erro inesperado: {str(e)}"
+
 
 if __name__ == "__main__":
     app.run(debug=True)
