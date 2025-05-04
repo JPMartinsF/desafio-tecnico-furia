@@ -39,7 +39,7 @@ http://localhost:5000
 
 ## 📹 Demonstração em Vídeo
 Veja como o fã pode interagir com o bot:
-[🔗 Link para o vídeo de demonstração no YouTube](https://youtu.be/f2pz_OAMEmU)
+[🔗 Link para o vídeo de demonstração no YouTube](https://www.youtube.com/watch?v=HnmXuNU5XEU)
 
 ## 🗂️ Estrutura do Projeto
 ```
