@@ -1,15 +1,8 @@
-# app.py
 from datetime import datetime
-
 import requests
-from flask import Flask
-from flask import jsonify
-from flask import render_template_string
-from flask import request
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
-
-# Estado para alternar curiosidades
 curiosity_index = 0
 
 CURIOSIDADES = [
@@ -19,102 +12,9 @@ CURIOSIDADES = [
     "🎮 A FURIA também tem times em outros jogos como Valorant, League of Legends, Rocket League, Apex Legends, e PUBG Mobile.",
 ]
 
-HTML_TEMPLATE = """
-<!DOCTYPE html>
-<html lang=\"pt-BR\">
-<head>
-  <meta charset=\"UTF-8\">
-  <title>Chat FURIA</title>
-  <style>
-    body { font-family: sans-serif; background: #000; color: white; display: flex; flex-direction: column; align-items: center; }
-    #chatbox { width: 100%; max-width: 500px; margin-top: 2rem; background: #111; padding: 1rem; border-radius: 8px; }
-    .msg { margin: 0.5rem 0; padding: 0.5rem; border-radius: 6px; }
-    .user { background: #6b21a8; text-align: right; }
-    .bot { background: #1f2937; text-align: left; }
-    input, button { padding: 0.5rem; font-size: 1rem; margin-top: 1rem; }
-    img.logo { max-width: 150px; margin-top: 1rem; }
-  </style>
-</head>
-<body>
-  <h1>🔥 Chat com a FURIA</h1>
-  <img class=\"logo\" src=\"https://upload.wikimedia.org/wikipedia/pt/9/99/Furia_Esports_logo.png\" alt=\"Logo FURIA\">
-  <div id=\"chatbox\"></div>
-  <input id=\"userInput\" type=\"text\" placeholder=\"Pergunte algo...\">
-  <button onclick=\"sendMessage()\">Enviar</button>
-  <script>
-    function sendMessage() {
-      const input = document.getElementById('userInput');
-      const text = input.value.trim();
-      if (!text) return;
-      appendMessage('user', text);
-      input.value = '';
-      fetch('/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
-      })
-      .then(res => res.json())
-      .then(data => appendMessage('bot', data.reply));
-    }
-    function appendMessage(sender, text) {
-      const div = document.createElement('div');
-      div.className = `msg ${sender}`;
-      div.innerHTML = text;
-      document.getElementById('chatbox').appendChild(div);
-    }
-  </script>
-</body>
-</html>
-"""
-
-
-def get_next_furia_match():
-    try:
-        response = requests.get("https://hltv-api.vercel.app/api/matches.json")
-        if response.status_code == 200:
-            matches = response.json()
-            for match in matches:
-                teams = [team["name"] for team in match.get("teams", [])]
-                if "FURIA" in teams or "FURIA Academy" in teams:
-                    event = match.get("event", {}).get("name", "Evento desconhecido")
-                    dt = datetime.strptime(match["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
-                    date_str = dt.strftime("%d/%m/%Y %H:%M")
-                    opponent = [team for team in teams if "FURIA" not in team]
-                    opponent_str = opponent[0] if opponent else "Adversário indefinido"
-                    return f"\U0001f4c5 Próximo jogo: {event} — contra {opponent_str} em {date_str}"
-            return "❌ Não encontrei partidas futuras da FURIA no momento."
-        else:
-            return "⚠️ Erro ao buscar informações, tente novamente mais tarde."
-    except Exception as e:
-        return f"⚠️ Erro inesperado: {str(e)}"
-
-
-def get_furia_players():
-    try:
-        response = requests.get("https://hltv-api.vercel.app/api/match.json")
-        if response.status_code == 200:
-            players = response.json()
-            jogadores = []
-            for player in players:
-                if "FURIA" in player["team"] or "FURIA Academy" in player["team"]:
-                    nickname = player.get("nickname", "FURIA")
-                    kd = player.get("kd", "N/A")
-                    rating = player.get("rating", "N/A")
-                    jogadores.append(f"Nickname: {nickname}\nKD: {kd}\nRating: {rating}")
-            if jogadores:
-                return "👥 Jogadores em destaque da FURIA:\n\n" + "\n\n".join(jogadores)
-            else:
-                return "Nenhum jogador encontrado."
-        else:
-            return "⚠️ Erro ao buscar informações, tente novamente mais tarde."
-    except Exception as e:
-        return f"⚠️ Erro inesperado: {str(e)}"
-
-
 @app.route("/")
 def index():
-    return render_template_string(HTML_TEMPLATE)
-
+    return render_template("index.html")
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -131,13 +31,50 @@ def chat():
         curiosity_index = (curiosity_index + 1) % len(CURIOSIDADES)
     elif "contato" in user_input:
         reply = (
-            '📞 Para falar com a FURIA, acesse: <a href="https://wa.me/5511993404466" target="_blank">WhatsApp Oficial</a> — estamos em beta fechado!'
+            '📞 Para falar com a FURIA, acesse: <a href="https://wa.me/5511993404466" target="_blank">WhatsApp Oficial</a>'
         )
     else:
-        reply = "⚡️ Ainda estou aprendendo! Tente perguntar sobre jogos, jogadores ou curiosidades."
+        reply = "⚡️ Olá! Tente perguntar sobre jogos, jogadores, curiosidades ou contato para falar conosco!"
 
     return jsonify({"reply": reply})
 
+def get_next_furia_match():
+    try:
+        response = requests.get("https://hltv-api.vercel.app/api/matches.json")
+        if response.status_code == 200:
+            matches = response.json()
+            for match in matches:
+                teams = [team["name"] for team in match.get("teams", [])]
+                if "FURIA" in teams or "FURIA Academy" in teams:
+                    event = match.get("event", {}).get("name", "Evento desconhecido")
+                    dt = datetime.strptime(match["time"], "%Y-%m-%dT%H:%M:%S.%fZ")
+                    date_str = dt.strftime("%d/%m/%Y %H:%M")
+                    opponent = [team for team in teams if "FURIA" not in team]
+                    opponent_str = opponent[0] if opponent else "Adversário indefinido"
+                    return f"\U0001f4c5 Próximo jogo: {event} — contra {opponent_str} em {date_str}"
+            return "❌ Não encontrei partidas futuras da FURIA no momento."
+        return "⚠️ Erro ao buscar informações, tente novamente mais tarde."
+    except Exception as e:
+        return f"⚠️ Erro inesperado: {str(e)}"
+
+def get_furia_players():
+    try:
+        response = requests.get("https://hltv-api.vercel.app/api/match.json")
+        if response.status_code == 200:
+            players = response.json()
+            jogadores = []
+            for player in players:
+                if "FURIA" in player["team"] or "FURIA Academy" in player["team"]:
+                    nickname = player.get("nickname", "FURIA")
+                    kd = player.get("kd", "N/A")
+                    rating = player.get("rating", "N/A")
+                    jogadores.append(f"Nickname: {nickname}\nKD: {kd}\nRating: {rating}")
+            if jogadores:
+                return "👥 Jogadores em destaque da FURIA:\n\n" + "\n\n".join(jogadores)
+            return "Nenhum jogador encontrado."
+        return "⚠️ Erro ao buscar informações, tente novamente mais tarde."
+    except Exception as e:
+        return f"⚠️ Erro inesperado: {str(e)}"
 
 if __name__ == "__main__":
     app.run(debug=True)
