@@ -23,13 +23,13 @@ cd desafio-tecnico-furia
 2. **Crie o ambiente virtual e instale as dependências:**
 ```bash
 python -m venv venv
-source venv/bin/activate  # No Windows: venv\Scripts\activate
-pip install -r requirements.txt
+source venv/bin/activate
+pip install -r chat_furia/requirements.txt
 ```
 
 3. **Execute a aplicação:**
 ```bash
-python app.py
+python chat_furia/app.py
 ```
 
 4. Acesse via navegador:
@@ -44,21 +44,18 @@ Veja como o fã pode interagir com o bot:
 ## 🗂️ Estrutura do Projeto
 ```
 desafio-tecnico-furia/
-├── app.py              # Código principal do chatbot Flask
-├── README.md           # Documentação do projeto
-└── static/             # (Opcional) arquivos estáticos, se necessário no futuro
+├── README.md                     # Documentação do projeto
+├── chat_furia/                   # Módulo principal do chatbot
+│   ├── requirements.txt          # Dependências do projeto
+│   ├── app.py                    # Código principal do Flask
+│   └── templates/                # Templates HTML do Flask
 ```
 
 ## 📌 Observações
 - A aplicação utiliza a API pública da HLTV (não oficial) para obter dados dos jogos.
-- A interface HTML é minimalista e responsiva.
-
-## 🤝 Contribuição
-Pull requests são bem-vindos. Para mudanças significativas, abra uma issue antes para discutirmos o que deseja alterar.
+- A API pública da HLTV (não oficial) não é mais mantida portanto suas informações estão desatualizadas.
 
 ## 🛡️ Licença
 Este projeto é apenas para fins demonstrativos no contexto do desafio proposto.
 
 ---
-
-Feito com 💜 para a FURIA e para a comunidade gamer brasileira!
